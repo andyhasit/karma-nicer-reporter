@@ -1,0 +1,24 @@
+{
+  "name": "karma-nicer-reporter",
+  "version": "1.0.0",
+  "description": "A karma reporter replacement with pretty output",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andyhasit/karma-nicer-reporter.git"
+  },
+  "keywords": [
+    "karma",
+    "reporter",
+    "nicer"
+  ],
+  "author": "Andrew Buchan <andyhasit@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Andyhasit/karma-nicer-reporter/issues"
+  },
+  "homepage": "https://github.com/Andyhasit/karma-nicer-reporter#readme"
+}
