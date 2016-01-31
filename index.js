@@ -1,7 +1,11 @@
+const chalk = require('chalk');
 
 var NicerReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   baseReporterDecorator(this);
-
+  function print(msg, color) {
+    console.log(chalk[color](msg));
+  };
+  
   this.adapters = [function(msg) {
       process.stdout.write.bind(process.stdout)(msg + "\r\n");
   }];
@@ -24,7 +28,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   this.onSpecComplete = function(browser, result) {
-    this.write(result.description);
+    print(result.description, 'green');
   }
 
   this.onRunComplete = function () {
@@ -33,10 +37,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   
 }
 
-
 NicerReporter.$inject = ['baseReporterDecorator', 'config', 'logger', 'helper', 'formatError']
-
-// PUBLISH DI MODULE
 module.exports = {
   'reporter:nicer': ['type', NicerReporter]
 }

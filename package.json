@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/Andyhasit/karma-nicer-reporter/issues"
   },
-  "homepage": "https://github.com/Andyhasit/karma-nicer-reporter#readme"
+  "homepage": "https://github.com/Andyhasit/karma-nicer-reporter#readme",
+  "dependencies": {
+    "chalk": "^1.1.1"
+  }
 }
