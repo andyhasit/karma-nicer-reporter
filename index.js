@@ -1,6 +1,7 @@
 const chalk = require('chalk');
 
 var NicerReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
+<<<<<<< HEAD
   var log = logger.create('reporter.logical');
   
   var browserCount = 0;
@@ -9,12 +10,24 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   
   //Allow us to take parts from karma.conf.js nicerReporter section
   var reporterConfig = config.nicerReporter || {};
+=======
+var log = logger.create('reporter.logical');
+  
+  var startPath = 'at ' + config.protocol + '//' + config.hostname + ':' + config.port + '/';
+  var startPathLength = startPath.length;
+  
+  //Allow us to take parts from karma.conf.js logicalReporter section
+  var reporterConfig = config.logicalReporter || {};
+>>>>>>> 89c655d9b2bc8bd3337ea35e7dfb934cac02d06d
   var successColor = reporterConfig.successColor || 'green';
   var failColor = reporterConfig.failColor || 'red';
   var skipColor = reporterConfig.skipColor || 'yellow';
   var defaulColor = reporterConfig.defaulColor || 'cyan';
   var errorColor = reporterConfig.errorColor || 'white';
+<<<<<<< HEAD
   
+=======
+>>>>>>> 89c655d9b2bc8bd3337ea35e7dfb934cac02d06d
   /*
   black
   red
@@ -52,7 +65,11 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     //
     print('.');
     print('..');    
+<<<<<<< HEAD
     print('... running KARMA (with karma-nicer-reporter)');
+=======
+    print('... running KARMA (with karma-logical-reporter)');
+>>>>>>> 89c655d9b2bc8bd3337ea35e7dfb934cac02d06d
   }
   
   function printErrorLog(log) {
@@ -99,7 +116,10 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   };
 
   this.onBrowserComplete = function (browser) {
+<<<<<<< HEAD
     browserCount ++;
+=======
+>>>>>>> 89c655d9b2bc8bd3337ea35e7dfb934cac02d06d
     print('');
     suiteNames = Object.keys(groupedResults);
     suiteNames.sort();
@@ -180,7 +200,10 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   
   this.onRunComplete = function () {
     //
+<<<<<<< HEAD
     print('Finished running tests on ' + browserCount + ' browsers');
+=======
+>>>>>>> 89c655d9b2bc8bd3337ea35e7dfb934cac02d06d
   }
 
 }
