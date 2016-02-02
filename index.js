@@ -1,18 +1,20 @@
 const chalk = require('chalk');
 
 var NicerReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
-var log = logger.create('reporter.logical');
+  var log = logger.create('reporter.logical');
   
+  var browserCount = 0;
   var startPath = 'at ' + config.protocol + '//' + config.hostname + ':' + config.port + '/';
   var startPathLength = startPath.length;
   
-  //Allow us to take parts from karma.conf.js logicalReporter section
-  var reporterConfig = config.logicalReporter || {};
+  //Allow us to take parts from karma.conf.js nicerReporter section
+  var reporterConfig = config.nicerReporter || {};
   var successColor = reporterConfig.successColor || 'green';
   var failColor = reporterConfig.failColor || 'red';
   var skipColor = reporterConfig.skipColor || 'yellow';
   var defaulColor = reporterConfig.defaulColor || 'cyan';
   var errorColor = reporterConfig.errorColor || 'white';
+  
   /*
   black
   red
@@ -50,7 +52,7 @@ var log = logger.create('reporter.logical');
     //
     print('.');
     print('..');    
-    print('... running KARMA (with karma-logical-reporter)');
+    print('... running KARMA (with karma-nicer-reporter)');
   }
   
   function printErrorLog(log) {
@@ -97,6 +99,7 @@ var log = logger.create('reporter.logical');
   };
 
   this.onBrowserComplete = function (browser) {
+    browserCount ++;
     print('');
     suiteNames = Object.keys(groupedResults);
     suiteNames.sort();
@@ -177,6 +180,7 @@ var log = logger.create('reporter.logical');
   
   this.onRunComplete = function () {
     //
+    print('Finished running tests on ' + browserCount + ' browsers');
   }
 
 }
