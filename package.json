@@ -23,5 +23,11 @@
   "homepage": "https://github.com/Andyhasit/karma-nicer-reporter#readme",
   "dependencies": {
     "chalk": "^1.1.1"
+  },
+  "devDependencies": {
+    "karma": "^0.13.21",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.2",
+    "phantomjs": "^1.9.19"
   }
 }
