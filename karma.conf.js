@@ -6,9 +6,7 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['jasmine'],
     files: [
-      //And your specs
-      'tests/test-helpers.js',
-      'tests/**/*.test.js'
+      'example_tests/**/*.spec.js'
     ],
     exclude: [
     ],

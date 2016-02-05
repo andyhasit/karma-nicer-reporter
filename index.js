@@ -176,8 +176,9 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     print('  ');
   }
   
-  this.onRunComplete = function () {
+  this.onRunComplete = function (done) {
     print('Finished running tests on ' + browserCount + ' browsers');
+    done();
   }
 
 }
