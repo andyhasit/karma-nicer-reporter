@@ -1,13 +1,14 @@
 const chalk = require('chalk');
 
 var NicerReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
-  var log = logger.create('reporter.logical');
   
+  var log = logger.create('reporter.logical');
   var browserCount = 0;
+  var horizontalLine = '-----------------------------------------------';
   var startPath = 'at ' + config.protocol + '//' + config.hostname + ':' + config.port + '/';
   var startPathLength = startPath.length;
   
-  //Allow us to take parts from karma.conf.js nicerReporter section
+  // Settings from karma.conf.js nicerReporter section
   var reporterConfig = config.nicerReporter || {};
   var successColor = reporterConfig.successColor || 'green';
   var failColor = reporterConfig.failColor || 'red';
@@ -33,6 +34,10 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   this.adapters = [function(msg) {
     process.stdout.write.bind(process.stdout)(msg + "\r\n");
   }];
+  
+  function blank() {
+    process.stdout.write("\r\n");
+  }
   
   function print(msg, color) {
     var color = color || defaulColor;
@@ -80,25 +85,25 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     }
     groupedResults[suite].push(result);
     if (!result.success) {
-      print('  ');
+      blank();
       if (!firstLinePrinted) {
-        print('-----------------------------------------------', failColor);
+        print(horizontalLine, failColor);
         print('  ');
         firstLinePrinted = true;
       }
       print('Failure at:', failColor);
       print('  SUITE: ' + result.suite, failColor);
       print('  TEST:  ' + result.description, failColor);
-      print('  ');
+      blank();
       printErrorLog(result.log);
-      print('  ');
-      print('-----------------------------------------------', failColor);
+      blank();
+      print(horizontalLine, failColor);
     }
     
   };
 
   this.onBrowserComplete = function (browser) {
-    print('');
+    blank();
     suiteNames = Object.keys(groupedResults);
     suiteNames.sort();
     for (var i=0, len=suiteNames.length; i<len; i++) {
@@ -159,26 +164,22 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     }
   };
   
-  
   function printSummary(browser) {
     var scores = browser.lastResult;
-    print(' ');
+    blank();
     print(browser.name);
-    print(' ');
-    //print('-------------------------------------');
+    blank();
     print('--------   Completed '  + scores.total + ' tests in ' + scores.totalTime + ' seconds   --------');
-    //print('-------------'  + browser.name + '-------------');
-    //print('Summary for ' + scores.total + ' tests in ' + scores.totalTime + ' seconds:');
-    print('  ');
+    blank();
     write('          PASS: ' + scores.success, successColor);
     write('    FAIL: ' + scores.failed, failColor);
     write('    SKIP: ' + scores.skipped, skipColor);
-    print('  ');
+    blank();
   }
   
-  this.onRunComplete = function (done) {
+  this.onRunComplete = function () {
     print('Finished running tests on ' + browserCount + ' browsers');
-    done();
+    print('');
   }
 
 }
