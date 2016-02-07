@@ -1,40 +1,20 @@
 const chalk = require('chalk');
 
 var NicerReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
+  baseReporterDecorator(this);
+  this.adapters = [function(msg) {
+    process.stdout.write.bind(process.stdout)(msg + "\r\n");
+  }];
   
   var log = logger.create('reporter.logical');
   var browserCount = 0;
   var horizontalLine = '-----------------------------------------------';
   var startPath = 'at ' + config.protocol + '//' + config.hostname + ':' + config.port + '/';
   var startPathLength = startPath.length;
-  
-  // Settings from karma.conf.js nicerReporter section
-  var reporterConfig = config.nicerReporter || {};
-  var successColor = reporterConfig.successColor || 'green';
-  var failColor = reporterConfig.failColor || 'red';
-  var skipColor = reporterConfig.skipColor || 'yellow';
-  var defaulColor = reporterConfig.defaulColor || 'cyan';
-  var errorColor = reporterConfig.errorColor || 'white';
-  /*
-  black
-  red
-  green
-  yellow
-  blue (on Windows the bright version is used as normal blue is illegible)
-  magenta
-  cyan
-  white
-  gray
-  */
   var groupedResults = {};
   var firstLinePrinted = false;
   
-  baseReporterDecorator(this);
-
-  this.adapters = [function(msg) {
-    process.stdout.write.bind(process.stdout)(msg + "\r\n");
-  }];
-  
+  // Utility functions
   function blank() {
     process.stdout.write("\r\n");
   }
@@ -48,6 +28,18 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     var color = color || defaulColor;
     process.stdout.write(chalk[color](msg));
   }
+  
+  // Settings from karma.conf.js nicerReporter section
+  // chalk colors: black  red  green  yellow  blue  magenta  cyan  white  gray
+  var reporterConfig = config.nicerReporter || {};
+  var successColor = reporterConfig.successColor || 'green';
+  var failColor = reporterConfig.failColor || 'red';
+  var skipColor = reporterConfig.skipColor || 'yellow';
+  var defaulColor = reporterConfig.defaulColor || 'cyan';
+  var errorColor = reporterConfig.errorColor || 'white';
+  
+  
+
   
   this.onRunStart = function (browsers) {
   }
