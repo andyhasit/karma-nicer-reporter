@@ -11,10 +11,11 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   var horizontalLine = '-----------------------------------------------';
   var startPath = 'at ' + config.protocol + '//' + config.hostname + ':' + config.port + '/';
   var startPathLength = startPath.length;
-  var groupedResults = {};
+  var resultsForSuite; // Set once per browser
   var firstLinePrinted = false;
   
   // Utility functions
+  
   function blank() {
     process.stdout.write("\r\n");
   }
@@ -38,44 +39,28 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   var defaulColor = reporterConfig.defaulColor || 'cyan';
   var errorColor = reporterConfig.errorColor || 'white';
   
+  // Karma runner event listeners
+  this.onBrowserStart = function (browsers) {
+    resultsForSuite = {};
+  };
   
-
+  this.onRunComplete = function () {
+    print('Finished running tests on ' + browserCount + ' browsers');
+    print('');
+  }
   
   this.onRunStart = function (browsers) {
-  }
-
-  this.onBrowserStart = function (browser) {
-    //
     print('.');
     print('..');    
     print('... running KARMA (with karma-nicer-reporter)');
   }
   
-  function printErrorLog(log) {
-    for (var i=0, len=log.length; i<len; i++) {
-      var logLines = log[i].split('\n');
-      for (var i=0, len=logLines.length; i<len; i++) {
-        var msg = logLines[i].trim() ;
-        
-        if (msg.startsWith(startPath)) {
-          msg = msg.substr(startPathLength);
-          var break1 = msg.indexOf('?');
-          var filePart = msg.slice(0, break1);
-          var break2 = msg.indexOf(':');
-          var lineNumber = msg.substr(break2);
-          msg = 'at ' + filePart +  ' line: ' + lineNumber;
-        }
-        print(msg, errorColor);
-      }
-    }
-  }
-  
   this.onSpecComplete = function(browser, result) {
     var suite = result.suite;
-    if (groupedResults[suite] === undefined) {
-      groupedResults[suite] = [];
+    if (resultsForSuite[suite] === undefined) {
+      resultsForSuite[suite] = [];
     }
-    groupedResults[suite].push(result);
+    resultsForSuite[suite].push(result);
     if (!result.success) {
       blank();
       if (!firstLinePrinted) {
@@ -87,23 +72,40 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
       print('  SUITE: ' + result.suite, failColor);
       print('  TEST:  ' + result.description, failColor);
       blank();
-      printErrorLog(result.log);
+      printErrorLogs(result.log);
       blank();
       print(horizontalLine, failColor);
     }
-    
   };
 
   this.onBrowserComplete = function (browser) {
     blank();
-    suiteNames = Object.keys(groupedResults);
+    suiteNames = Object.keys(resultsForSuite);
     suiteNames.sort();
     for (var i=0, len=suiteNames.length; i<len; i++) {
       var suiteName = suiteNames[i];
-      printSuite(suiteName, groupedResults[suiteName]);
+      printSuite(suiteName, resultsForSuite[suiteName]);
     }
     printSummary(browser);
   };
+  
+  function printErrorLogs(logs) {
+    logs.forEach(function(log) {
+      var logLines = log.split('\n');
+      logLines.forEach(function(msg) {
+        var msg = msg.trim();
+        if (msg.startsWith(startPath)) {
+          msg = msg.substr(startPathLength);
+          var break1 = msg.indexOf('?');
+          var filePart = msg.slice(0, break1);
+          var break2 = msg.indexOf(':');
+          var lineNumber = msg.substr(break2);
+          msg =  '  >>> ' + filePart +  ' line: ' + lineNumber;
+        }
+        print(msg, errorColor);
+      });
+    });
+  }
   
   function printSuite(suiteName, results) {
     var failed = 0;
@@ -167,11 +169,6 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     write('    FAIL: ' + scores.failed, failColor);
     write('    SKIP: ' + scores.skipped, skipColor);
     blank();
-  }
-  
-  this.onRunComplete = function () {
-    print('Finished running tests on ' + browserCount + ' browsers');
-    print('');
   }
 
 }
