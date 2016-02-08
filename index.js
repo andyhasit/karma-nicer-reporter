@@ -30,8 +30,17 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     process.stdout.write(chalk[color](msg));
   }
   
+  function z(value) {
+    if (value == 0) {
+      return ' .'
+    } else {
+      return String("  " + value).slice(-2)
+    }
+  };
+  
   // Settings from karma.conf.js nicerReporter section
   // chalk colors: black  red  green  yellow  blue  magenta  cyan  white  gray
+  
   var reporterConfig = config.nicerReporter || {};
   var successColor = reporterConfig.successColor || 'green';
   var failColor = reporterConfig.failColor || 'red';
@@ -44,16 +53,16 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     resultsForSuite = {};
   };
   
-  this.onRunComplete = function () {
-    print('Finished running tests on ' + browserCount + ' browsers');
-    print('');
-  }
-  
   this.onRunStart = function (browsers) {
     print('.');
     print('..');    
     print('... running KARMA (with karma-nicer-reporter)');
-  }
+  };
+  
+  this.onRunComplete = function () {
+    print('Finished running tests on ' + browserCount + ' browsers');
+    print('');
+  };
   
   this.onSpecComplete = function(browser, result) {
     var suite = result.suite;
@@ -62,19 +71,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     }
     resultsForSuite[suite].push(result);
     if (!result.success) {
-      blank();
-      if (!firstLinePrinted) {
-        print(horizontalLine, failColor);
-        print('  ');
-        firstLinePrinted = true;
-      }
-      print('Failure at:', failColor);
-      print('  SUITE: ' + result.suite, failColor);
-      print('  TEST:  ' + result.description, failColor);
-      blank();
-      printErrorLogs(result.log);
-      blank();
-      print(horizontalLine, failColor);
+      printSpecFailure(result);
     }
   };
 
@@ -89,23 +86,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     printSummary(browser);
   };
   
-  function printErrorLogs(logs) {
-    logs.forEach(function(log) {
-      var logLines = log.split('\n');
-      logLines.forEach(function(msg) {
-        var msg = msg.trim();
-        if (msg.startsWith(startPath)) {
-          msg = msg.substr(startPathLength);
-          var break1 = msg.indexOf('?');
-          var filePart = msg.slice(0, break1);
-          var break2 = msg.indexOf(':');
-          var lineNumber = msg.substr(break2);
-          msg =  '  >>> ' + filePart +  ' line: ' + lineNumber;
-        }
-        print(msg, errorColor);
-      });
-    });
-  }
+  // Worker functions
   
   function printSuite(suiteName, results) {
     var failed = 0;
@@ -124,13 +105,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
       }
     }
     
-    function z(value) {
-      if (value == 0) {
-        return ' .'
-      } else {
-        return String("  " + value).slice(-2)
-      }
-    };
+
     
     function printHeader(outcome, color) {
       write(' ');
@@ -157,6 +132,40 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
       printHeader('FAILED', failColor);
     }
   };
+  
+  function printSpecFailure(result){
+    blank();
+    if (!firstLinePrinted) {
+    print(horizontalLine, failColor);
+    print('  ');
+    firstLinePrinted = true;
+    }
+    print('Failure at:', failColor);
+    print('  SUITE: ' + result.suite, failColor);
+    print('  TEST:  ' + result.description, failColor);
+    blank();
+    printErrorLogs(result.log);
+    blank();
+    print(horizontalLine, failColor);
+  }
+
+  function printErrorLogs(logs) {
+    logs.forEach(function(log) {
+      var logLines = log.split('\n');
+      logLines.forEach(function(msg) {
+        var msg = msg.trim();
+        if (msg.startsWith(startPath)) {
+          msg = msg.substr(startPathLength);
+          var break1 = msg.indexOf('?');
+          var filePart = msg.slice(0, break1);
+          var break2 = msg.indexOf(':');
+          var lineNumber = msg.substr(break2);
+          msg =  '  >>> ' + filePart +  ' line: ' + lineNumber;
+        }
+        print(msg, errorColor);
+      });
+    });
+  }
   
   function printSummary(browser) {
     var scores = browser.lastResult;
