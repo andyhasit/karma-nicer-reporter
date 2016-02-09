@@ -46,7 +46,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   var failColor = reporterConfig.failColor || 'red';
   var skipColor = reporterConfig.skipColor || 'yellow';
   var defaulColor = reporterConfig.defaulColor || 'cyan';
-  var errorColor = reporterConfig.errorColor || 'white';
+  var errorLogColor = reporterConfig.errorLogColor || 'white';
   
   // Karma runner event listeners
   this.onBrowserStart = function (browsers) {
@@ -81,14 +81,29 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     suiteNames.sort();
     for (var i=0, len=suiteNames.length; i<len; i++) {
       var suiteName = suiteNames[i];
-      printSuite(suiteName, resultsForSuite[suiteName]);
+      printSuiteSummary(suiteName, resultsForSuite[suiteName]);
     }
-    printSummary(browser);
+    printBrowserSummary(browser);
   };
   
   // Worker functions
   
-  function printSuite(suiteName, results) {
+  function printSuiteSummary(suiteName, results) {
+    function writeSummaryLine(outcome, color) {
+      write(' ');
+      write(z(success), successColor);
+      write(' ');
+      write(z(failed), failColor);
+      write(' ');
+      write(z(skipped), skipColor);
+      write('  ');
+      write(z(len));
+      write('  ');
+      write(outcome, color);
+      write(' suite > ', color);
+      write(suiteName , color);
+      write('\r\n');
+    }
     var failed = 0;
     var skipped = 0;
     var success = 0;
@@ -104,32 +119,14 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
         failed += 1;
       }
     }
-    
-
-    
-    function printHeader(outcome, color) {
-      write(' ');
-      write(z(success), successColor);
-      write(' ');
-      write(z(failed), failColor);
-      write(' ');
-      write(z(skipped), skipColor);
-      write('  ');
-      write(z(len));
-      write('  ');
-      write(outcome, color);
-      write(' suite > ', color);
-      write(suiteName , color);
-      write('\r\n');
-    }
     if (failed == 0) {
       if (skipped == 0) {
-        printHeader('PASSED', successColor);
+        writeSummaryLine('PASSED', successColor);
       } else {
-        printHeader('UNSURE', skipColor);
+        writeSummaryLine('UNSURE', skipColor);
       }
     } else {
-      printHeader('FAILED', failColor);
+      writeSummaryLine('FAILED', failColor);
     }
   };
   
@@ -162,12 +159,12 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
           var lineNumber = msg.substr(break2);
           msg =  '  >>> ' + filePart +  ' line: ' + lineNumber;
         }
-        print(msg, errorColor);
+        print(msg, errorLogColor);
       });
     });
   }
   
-  function printSummary(browser) {
+  function printBrowserSummary(browser) {
     var scores = browser.lastResult;
     blank();
     print(browser.name);
