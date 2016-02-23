@@ -11,9 +11,17 @@ module.exports = function(config) {
     exclude: [
     ],
     reporters: ['nicer'],
-    niceReporter : {
-      successMsg: 'yay',
-      failureMsg: 'nay',
+    /*
+    nicerReporter settings (optional) here showing the default colors.
+    Uses chalk (https://github.com/chalk/chalk)
+    available colors: black  red  green  yellow  blue  magenta  cyan  white  gray
+    */
+    nicerReporter : {
+      defaulColor: 'cyan',
+      successColor: 'green',
+      failColor: 'red',
+      skipColor: 'yellow',
+      errorLogColor: 'white'
     },
     proxies : {
     },
