@@ -60,8 +60,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   };
   
   this.onRunComplete = function () {
-    print('Finished running tests on ' + browserCount + ' browsers');
-    print('');
+    printFinalSummary();
   };
   
   this.onSpecComplete = function(browser, result) {
@@ -76,6 +75,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   };
 
   this.onBrowserComplete = function (browser) {
+    browserCount ++;
     blank();
     suiteNames = Object.keys(resultsForSuite);
     suiteNames.sort();
@@ -167,14 +167,22 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   function printBrowserSummary(browser) {
     var scores = browser.lastResult;
     blank();
-    print(browser.name);
+    print('Summary for browser  --  ' + browser.name);
+    //blank();
+    //print('--------   Completed '  + scores.total + ' tests in ' + scores.totalTime + ' seconds   --------');
     blank();
-    print('--------   Completed '  + scores.total + ' tests in ' + scores.totalTime + ' seconds   --------');
-    blank();
-    write('          PASS: ' + scores.success, successColor);
+    write('    PASS: ' + scores.success, successColor);
     write('    FAIL: ' + scores.failed, failColor);
     write('    SKIP: ' + scores.skipped, skipColor);
+    write('    TOTAL: ' + scores.total + ' (time: ' + scores.totalTime + 'sec)');
     blank();
+  }
+  
+  function printFinalSummary() {
+    blank();
+    print('-------');
+    var end = (browserCount == 1)? ' browser.' : ' browsers.';
+    print('Finished running tests on ' + browserCount + end);
   }
 
 }
