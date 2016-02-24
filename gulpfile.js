@@ -17,5 +17,12 @@ gulp.task('test', ['copy_index'], function (done) {
   new Server({
     configFile: __dirname + '/karma.conf.js',
     singleRun: true
-  }, function() { done(); }).start();
+  }, 
+  /*
+  Note: I'm wrappin done() in a function to suppress an annoying error message.
+  Don't do this if using CI as you rely on it feeding back the error code to
+  indicate tests have failed.
+  */
+  function() { done(); }
+  ).start();
 });
