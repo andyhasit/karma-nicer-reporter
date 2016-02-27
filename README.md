@@ -19,15 +19,17 @@ These two screenshots were run on the same test suite (included in this repo) us
 
 #####Karma's default __"progress"__ reporter:
 
-![Karma's default output](screenshots/normal.jpg?raw=true "")
+<p align="center">
+  <img src="screenshots/normal.jpg" width="80%"/>
+</p>
 
 #####The __"nicer"__ reporter:
 
-![Karma's default output](screenshots/nicer.jpg?raw=true "")
-
+<p align="center">
+  <img src="screenshots/nicer.jpg" width="80%"/>
+</p>
 
 #Installation
-
 
 Karma nicer reporter is available on __npm__ so just run:
 
