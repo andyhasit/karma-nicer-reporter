@@ -1,7 +1,7 @@
 {
   "name": "karma-nicer-reporter",
   "version": "1.0.0",
-  "description": "A karma reporter replacement with pretty output",
+  "description": "A nicer reporter for Karma",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -15,12 +15,12 @@
     "reporter",
     "nicer"
   ],
-  "author": "Andrew Buchan <andyhasit@gmail.com>",
+  "author": "Andrew Buchan (www.andyhasit.com)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Andyhasit/karma-nicer-reporter/issues"
+    "url": "https://github.com/andyhasit/karma-nicer-reporter/issues"
   },
-  "homepage": "https://github.com/Andyhasit/karma-nicer-reporter#readme",
+  "homepage": "https://github.com/andyhasit/karma-nicer-reporter#readme",
   "dependencies": {
     "chalk": "^1.1.1"
   },
