@@ -156,7 +156,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
           var break1 = msg.indexOf('?');
           var filePart = msg.slice(0, break1);
           var break2 = msg.indexOf(':');
-          var lineNumber = msg.substr(break2);
+          var lineNumber = msg.substr(break2 + 1);
           msg =  '  >>> ' + filePart +  ' line: ' + lineNumber;
         }
         print(msg, errorLogColor);
