@@ -15,7 +15,11 @@
     "reporter",
     "nicer"
   ],
-  "author": "Andrew Buchan (www.andyhasit.com)",
+  "author": {
+    "name": "Andrew Buchan",
+    "email": "andyhasit@gmail.com",
+    "http": "http://andyhasit.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/andyhasit/karma-nicer-reporter/issues"
