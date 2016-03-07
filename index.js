@@ -13,8 +13,6 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   var log = logger.create('reporter.logical');
   var browserCount = 0;
   var horizontalLine = '-----------------------------------------------';
-  var startPath = 'at ' + config.protocol + '//' + config.hostname + ':' + config.port + '/';
-  var startPathLength = startPath.length;
   var firstLinePrinted = false;
 
   // Utility functions
@@ -161,17 +159,30 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   function printErrorLogs(logs) {
+    //    varies per browser
+    var startPath = config.protocol + '//' + config.hostname + ':' + config.port + '/';
+    var startPathLength = startPath.length;
+    print(startPath, successColor);
     logs.forEach(function(log) {
       var logLines = log.split('\n');
       logLines.forEach(function(msg) {
         var msg = msg.trim();
-        if (msg.startsWith(startPath)) {
-          msg = msg.substr(startPathLength);
+        var indexOfStartPath = msg.indexOf(startPath);
+        if (indexOfStartPath >= 0) {
+          msg = msg.substr(startPathLength + indexOfStartPath);
           var break1 = msg.indexOf('?');
           var filePart = msg.slice(0, break1);
           var break2 = msg.indexOf(':');
-          var lineNumber = msg.substr(break2 + 1);
-          msg =  '  >>> ' + filePart +  ' line: ' + lineNumber;
+          var postionString = msg.substr(break2 + 1);
+          var columnInPositionString = postionString.indexOf(':');
+          if (columnInPositionString >= 0) {
+            msg =  '  >>> ' + filePart +  '   line ' + 
+                    postionString.slice(0, columnInPositionString) + 
+                    ' [:' +
+                    postionString.substr(columnInPositionString + 1) + ']';
+          } else{
+            msg =  '  >>> ' + filePart +  ' -- ' + postionString;
+          }
         }
         print(msg, errorLogColor);
       });
