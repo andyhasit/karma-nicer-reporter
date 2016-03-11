@@ -7,8 +7,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     browserLog(msg);
   }];
 
-
-
+  var basePath = config.protocol + '//' + config.hostname + ':' + config.port + '/base';
   var currentBrowserName, resultsForSuite, currentSpecName;
   var log = logger.create('reporter.logical');
   var browserCount = 0;
@@ -159,36 +158,41 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   }
 
   function printErrorLogs(logs) {
-    //    varies per browser
-    var startPath = config.protocol + '//' + config.hostname + ':' + config.port + '/';
-    var startPathLength = startPath.length;
-    print(startPath, successColor);
+    //    varies per browser, this only works with PhantomJS 2
     logs.forEach(function(log) {
       var logLines = log.split('\n');
       logLines.forEach(function(msg) {
+        print(msg);
+        //msg could contain error or just path
         var msg = msg.trim();
-        var indexOfStartPath = msg.indexOf(startPath);
-        if (indexOfStartPath >= 0) {
-          msg = msg.substr(startPathLength + indexOfStartPath);
-          var break1 = msg.indexOf('?');
-          var filePart = msg.slice(0, break1);
-          var break2 = msg.indexOf(':');
-          var postionString = msg.substr(break2 + 1);
-          var columnInPositionString = postionString.indexOf(':');
-          if (columnInPositionString >= 0) {
-            msg =  '  >>> ' + filePart +  '   line ' + 
-                    postionString.slice(0, columnInPositionString) + 
-                    ' [:' +
-                    postionString.substr(columnInPositionString + 1) + ']';
-          } else{
-            msg =  '  >>> ' + filePart +  ' -- ' + postionString;
+        var indexOfBasePath = msg.indexOf(basePath);
+        if (indexOfBasePath >= 0) {
+          var partBeforeUrl = msg.slice(0, indexOfBasePath).trim();
+          if (partBeforeUrl.length > 0) {
+            print(partBeforeUrl, errorLogColor);
           }
+          var remainder = msg.slice(indexOfBasePath);
+          var firstSpaceInRemainder = remainder.indexOf(' ');
+          var url = remainder.slice(0, firstSpaceInRemainder);
+          var afterUrl = remainder.slice(firstSpaceInRemainder);
+          print('...' + extractFileFromUrl(url, basePath) + ' ' + afterUrl, errorLogColor);
+        } else {
+          print(msg, errorLogColor);
         }
-        print(msg, errorLogColor);
       });
+      blank();
     });
+    
   }
-
+ 
+  function extractFileFromUrl(url, basePath) {
+    var end = url.indexOf('?');
+    if (end > 1) {
+      return url.slice(basePath.length, end);
+    }
+    return url.slice(basePath.length);
+  }
+  
   function printBrowserSummary(browser) {
     var scores = browser.lastResult;
     blank();
