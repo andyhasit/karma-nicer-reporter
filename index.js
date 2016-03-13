@@ -162,7 +162,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     logs.forEach(function(log) {
       var logLines = log.split('\n');
       logLines.forEach(function(msg) {
-        print(msg);
+        //print(msg);
         //msg could contain error or just path
         var msg = msg.trim();
         var indexOfBasePath = msg.indexOf(basePath);
@@ -172,9 +172,16 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
             print(partBeforeUrl, errorLogColor);
           }
           var remainder = msg.slice(indexOfBasePath);
-          var firstSpaceInRemainder = remainder.indexOf(' ');
-          var url = remainder.slice(0, firstSpaceInRemainder);
-          var afterUrl = remainder.slice(firstSpaceInRemainder);
+          /* Expecting path to look like
+          http://localhost:9876/base/tests/deleting-many-to-many.test.js?871a02c63bbc1acbfe689918bfaffcb82ecdc088:37:21
+          or 
+          http://localhost:9876/base/src/ManyToManyRelationship.js?b19291610ac5d92acd96633c9a68c9e8b82d3ade (line 145)
+          But chrome wraps the whole thing in brackets.
+          TODO: figure out how to unit test.
+          */
+          var endOfUrl = regexIndexOf(remainder, /\W/g, remainder.indexOf('?') + 1);
+          var url = remainder.slice(0, endOfUrl);
+          var afterUrl = remainder.slice(endOfUrl + 1);
           print('...' + extractFileFromUrl(url, basePath) + ' ' + afterUrl, errorLogColor);
         } else {
           print(msg, errorLogColor);
@@ -182,7 +189,11 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
       });
       blank();
     });
-    
+  }
+  
+  function regexIndexOf(str, regex, startpos) {
+    var indexOf = str.substring(startpos || 0).search(regex);
+    return (indexOf >= 0) ? (indexOf + (startpos || 0)) : indexOf;
   }
  
   function extractFileFromUrl(url, basePath) {
