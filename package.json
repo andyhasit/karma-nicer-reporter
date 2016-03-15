@@ -1,6 +1,6 @@
 {
   "name": "karma-nicer-reporter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A nicer reporter for Karma",
   "main": "index.js",
   "scripts": {
