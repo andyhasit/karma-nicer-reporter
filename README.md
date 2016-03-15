@@ -1,41 +1,25 @@
 A nicer reporter for [Karma](http://karma-runner.github.io/0.13/index.html).
 
-#Why
+#What is this?
 
-Although [Karma](http://karma-runner.github.io/0.13/index.html) is awesome, it's default reporter  (__progress__) isn't that great.
+A __"nicer"__ reporter for [karma test runner](http://karma-runner.github.io/0.13/index.html) designed to show you what you need to know at a glance:
 
-So I made the __nicer__ reporter which:
+  - Only prints details for failed tests
+  - Color-coded summary passed/failed/skipped per suite
+  - Shortens URLs of files in error message print out
 
-  - Shows a nice color-coded summary with the number of tests passed | failed | skipped in each spec.
-  - Shows more clearly where the error occured.
-  - Reduces noise by only printing failed tests (+ the summary)
-  - Has customisable colors.
-
-
-
-#Screenshots
-
-These two screenshots were run on the same test suite (included in this repo) using  ConEmu on Windows as console.
-
-#####Karma's default __"progress"__ reporter:
+### Example screenshot
 
 <p align="center">
-  <img src="screenshots/normal.jpg" width="80%"/>
+  <img src="screenshots/screen.jpg" width="80%"/>
 </p>
 
-#####The __"nicer"__ reporter:
-
-<p align="center">
-  <img src="screenshots/nicer.jpg" width="80%"/>
-</p>
+(Taken from ConEmu on Windows)
 
 #Installation
 
-Karma nicer reporter is available on __npm__ so just run:
-
     npm install karma-nicer-reporter --save-dev
     
-
 #Usage
 
 In your karma configuration file include __nicer__ as a (or the) reporter.
