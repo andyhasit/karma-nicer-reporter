@@ -60,14 +60,16 @@ describe('Suite that fails', function() {
     expect(2 + 2).toEqual(4);
   });
   it('3 plus 3 equals 6', function() {
-    expect(3 + 3).toEqual(6);
+    expect(3 + 4).toEqual(6);
   });
+  /*
   it('99 plus 1 equals 2', function() {
     expect(99 + 1).toEqual(2);
     expect(56 + 1).toEqual(2);
     expect(11 + 1).toEqual(2);
     expect(34 + 1).toEqual(2);
   });
+  */
 });
 
 describe('Suite that fails with test skipped', function() {

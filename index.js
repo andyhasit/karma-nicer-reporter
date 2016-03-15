@@ -1,4 +1,4 @@
-const chalk = require('chalk');
+var chalk = require('chalk');
 
 var NicerReporter = function (baseReporterDecorator, config, logger, helper, formatError) {
   baseReporterDecorator(this);
@@ -11,7 +11,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   var currentBrowserName, resultsForSuite, currentSpecName;
   var log = logger.create('reporter.logical');
   var browserCount = 0;
-  var horizontalLine = '-----------------------------------------------';
+  var horizontalLine = '-----------------------------------------------------------------';
   var firstLinePrinted = false;
 
   // Utility functions
@@ -30,7 +30,7 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
     process.stdout.write(chalk[color](msg));
   }
 
-  function z(value) {
+  function padCount(value) {
     if (value == 0) {
       return ' .'
     } else {
@@ -87,6 +87,8 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
 
   this.onBrowserComplete = function (browser) {
     browserCount ++;
+    print(horizontalLine);
+    print('Summary for browser  --  ' + browser.name);
     blank();
     suiteNames = Object.keys(resultsForSuite);
     suiteNames.sort();
@@ -102,13 +104,13 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   function printSuiteSummary(suiteName, results) {
     function writeSummaryLine(outcome, color) {
       write(' ');
-      write(z(success), successColor);
+      write(padCount(success), successColor);
       write(' ');
-      write(z(failed), failColor);
+      write(padCount(failed), failColor);
       write(' ');
-      write(z(skipped), skipColor);
+      write(padCount(skipped), skipColor);
       write('  ');
-      write(z(len));
+      write(padCount(len));
       write('  ');
       write(outcome, color);
       write(' > ', color);
@@ -142,53 +144,46 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   };
 
   function printSpecFailure(result){
-    blank();
-    if (!firstLinePrinted) {
-    print(horizontalLine, failColor);
-    print('  ');
-    firstLinePrinted = true;
-    }
-    print('Failure at:', failColor);
-    print('  SUITE: ' + result.suite, failColor);
-    print('  TEST:  ' + result.description, failColor);
+    //if (!firstLinePrinted) {
+      print(horizontalLine, errorLogColor);
+      //firstLinePrinted = true;
+    //}
+    print('FAILURE IN: "' + result.suite + '"', errorLogColor);
+    print('SPEC: "' + result.description + '"', errorLogColor);
     blank();
     printErrorLogs(result.log);
     blank();
-    print(horizontalLine, failColor);
   }
 
   function printErrorLogs(logs) {
-    //    varies per browser, this only works with PhantomJS 2
     logs.forEach(function(log) {
       var logLines = log.split('\n');
       logLines.forEach(function(msg) {
-        //print(msg);
-        //msg could contain error or just path
-        var msg = msg.trim();
-        var indexOfBasePath = msg.indexOf(basePath);
-        if (indexOfBasePath >= 0) {
-          var partBeforeUrl = msg.slice(0, indexOfBasePath).trim();
-          if (partBeforeUrl.length > 0) {
-            print(partBeforeUrl, errorLogColor);
-          }
-          var remainder = msg.slice(indexOfBasePath);
-          /* Expecting path to look like
-          http://localhost:9876/base/tests/deleting-many-to-many.test.js?871a02c63bbc1acbfe689918bfaffcb82ecdc088:37:21
-          or 
-          http://localhost:9876/base/src/ManyToManyRelationship.js?b19291610ac5d92acd96633c9a68c9e8b82d3ade (line 145)
-          But chrome wraps the whole thing in brackets.
-          TODO: figure out how to unit test.
-          */
-          var endOfUrl = regexIndexOf(remainder, /\W/g, remainder.indexOf('?') + 1);
-          var url = remainder.slice(0, endOfUrl);
-          var afterUrl = remainder.slice(endOfUrl + 1);
-          print('...' + extractFileFromUrl(url, basePath) + ' ' + afterUrl, errorLogColor);
-        } else {
-          print(msg, errorLogColor);
-        }
+        print(shortenLogMessage(msg, basePath), errorLogColor);
       });
-      blank();
     });
+  }
+  
+  function shortenLogMessage(msg, basePath) {
+    /* Expecting path to look like
+      http://localhost:9876/base/tests/deleting-many-to-many.test.js?871a02c63bbc1acbfe689918bfaffcb82ecdc088:37:21
+      or 
+      http://localhost:9876/base/src/ManyToManyRelationship.js?b19291610ac5d92acd96633c9a68c9e8b82d3ade (line 145)
+      But chrome wraps the whole thing in brackets.
+      TODO: figure out how to unit test.
+      */
+    var msg = msg.trim();
+    var indexOfBasePath = msg.indexOf(basePath);
+    if (indexOfBasePath >= 0) {
+      var partBeforeUrl = msg.slice(0, indexOfBasePath);
+      var remainder = msg.slice(indexOfBasePath);
+      var endOfUrl = regexIndexOf(remainder, /\W/g, remainder.indexOf('?') + 1);
+      var url = remainder.slice(0, endOfUrl);
+      var afterUrl = remainder.slice(endOfUrl + 1);
+      return partBeforeUrl + '...' + extractFileFromUrl(url, basePath) + ' ' + afterUrl;
+    } else {
+      return msg;
+    }
   }
   
   function regexIndexOf(str, regex, startpos) {
@@ -207,20 +202,27 @@ var NicerReporter = function (baseReporterDecorator, config, logger, helper, for
   function printBrowserSummary(browser) {
     var scores = browser.lastResult;
     blank();
-    print('Summary for browser  --  ' + browser.name);
-    //blank();
-    //print('--------   Completed '  + scores.total + ' tests in ' + scores.totalTime + ' seconds   --------');
-    blank();
     write('    PASS: ' + scores.success, successColor);
     write('    FAIL: ' + scores.failed, failColor);
     write('    SKIP: ' + scores.skipped, skipColor);
-    write('    TOTAL: ' + scores.total + ' (time: ' + scores.totalTime + 'sec)');
+    write('    TOTAL: ' + scores.total + ' (time: ' + formatTimeInterval(scores.totalTime) + ')');
     blank();
+  }
+  
+  // Copied from karma/lib/helpers 
+  function formatTimeInterval (time) {
+    var mins = Math.floor(time / 60000)
+    var secs = (time - mins * 60000) / 1000
+    var str = secs + (secs === 1 ? ' sec' : ' secs')
+    if (mins) {
+      str = mins + (mins === 1 ? ' min ' : ' mins ') + str
+    }
+    return str
   }
 
   function printFinalSummary() {
     blank();
-    print('-------');
+    print(horizontalLine);
     var end = (browserCount == 1)? ' browser.' : ' browsers.';
     print('Finished running tests on ' + browserCount + end);
   }

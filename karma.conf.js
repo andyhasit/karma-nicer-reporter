@@ -30,7 +30,7 @@ module.exports = function(config) {
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
     logLevel: config.LOG_ERROR,
     autoWatch: false,
-    browsers: ['PhantomJS'],
+    browsers: ['PhantomJS'], //Chrome
     singleRun: true,
     concurrency: Infinity
   });
