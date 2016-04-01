@@ -1,4 +1,13 @@
+[npm-url]: https://npmjs/package/karma-nicer-reporter
+[npm-version-image]: https://badge.fury.io/js/karma-nicer-reporter.svg
+[npm-downloads-image]: https://img.shields.io/npm/dt/karma-nicer-reporter.svg
+
+# karma-nicer-reporter
+
 A nicer reporter for [Karma](http://karma-runner.github.io/0.13/index.html).
+
+[![npm version][npm-version-image]][npm-url]
+[![npm downloads][npm-downloads-image]][npm-url]
 
 #What is this?
 
